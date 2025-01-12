@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flux AI Photo Generator</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f0f4f8;
+            --text-color: #333;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        #prompt-input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+
+        #generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        #generate-btn:hover {
+            background-color: #3a7bc8;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        #generated-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading span {
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); }
+            40% { color: var(--text-color); }
+            60%, 100% { color: var(--text-color); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flux AI Photo Generator</h1>
+        <div class="input-group">
+            <input type="text" id="prompt-input" placeholder="Enter your image prompt...">
+            <button id="generate-btn">Generate</button>
+        </div>
+        <div id="result"></div>
+        <div class="loading">Generating image<span>.</span></div>
+    </div>
+
+    <script>
+        const API_TOKEN = "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"; // Replace with your actual Hugging Face API token
+        const API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large"; // Replace with the actual model endpoint
+        const promptInput = document.getElementById('prompt-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const result = document.getElementById('result');
+        const loading = document.querySelector('.loading');
+
+        async function generateImage(prompt) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${API_TOKEN}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ inputs: prompt }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+            } catch (error) {
+                console.error("Error generating image:", error);
+                throw error;
+            }
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                alert("Please enter a prompt.");
+                return;
+            }
+
+            result.innerHTML = "";
+            loading.style.display = "block";
+            generateBtn.disabled = true;
+
+            try {
+                const imageUrl = await generateImage(prompt);
+                const img = document.createElement("img");
+                img.src = imageUrl;
+                img.id = "generated-image";
+                img.alt = `Generated image for: ${prompt}`;
+                result.appendChild(img);
+            } catch (error) {
+                result.textContent = "Error generating image. Please try again.";
+            } finally {
+                loading.style.display = "none";
+                generateBtn.disabled = false;
+            }
+        });
+
+        promptInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                generateBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
