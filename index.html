@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stable Diffusion Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4a90e2;
@@ -15,13 +16,14 @@
         body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Funnel Display', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
         .container {
@@ -31,12 +33,36 @@
             padding: 2rem;
             width: 90%;
             max-width: 600px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 1.5rem;
+            animation: pop 0.8s ease-in-out;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .input-group {
@@ -50,6 +76,7 @@
             font-size: 1rem;
             border: 1px solid #ccc;
             border-radius: 4px 0 0 4px;
+            font-family: 'Funnel Display', sans-serif;
         }
 
         #generate-btn {
@@ -61,6 +88,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             border-radius: 0 4px 4px 0;
+            font-family: 'Funnel Display', sans-serif;
         }
 
         #generate-btn:hover {
@@ -77,6 +105,23 @@
             height: auto;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        #download-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            color: white;
+            background-color: var(--secondary-color);
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #download-btn:hover {
+            background-color: #e8951b;
         }
 
         .loading {
@@ -88,12 +133,6 @@
         .loading span {
             display: inline-block;
             margin-left: 4px;
-        }
-
-        @keyframes dots {
-            0%, 20% { color: rgba(0,0,0,0); }
-            40% { color: var(--text-color); }
-            60%, 100% { color: var(--text-color); }
         }
     </style>
 </head>
@@ -152,11 +191,21 @@
 
             try {
                 const imageUrl = await generateImage(prompt);
+
+                // Add the image to the result
                 const img = document.createElement("img");
                 img.src = imageUrl;
                 img.id = "generated-image";
                 img.alt = `Generated image for: ${prompt}`;
                 result.appendChild(img);
+
+                // Add a download button
+                const downloadBtn = document.createElement("a");
+                downloadBtn.id = "download-btn";
+                downloadBtn.href = imageUrl;
+                downloadBtn.download = "generated-image.png";
+                downloadBtn.textContent = "Download Image";
+                result.appendChild(downloadBtn);
             } catch (error) {
                 result.textContent = "Error generating image. Please try again.";
             } finally {
