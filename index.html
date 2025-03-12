@@ -3,158 +3,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stable Diffusion Image Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;700&display=swap" rel="stylesheet">
+    <title>StableGen - Material Design 3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap">
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f5a623;
-            --background-color: #f0f4f8;
-            --text-color: #333;
+            /* MD3 Light Theme Colors */
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-on-primary-container: #21005E;
+            --md-sys-color-secondary: #0B57D0;
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: #D3E3FD;
+            --md-sys-color-on-secondary-container: #041E49;
+            --md-sys-color-surface: #FFFBFE;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface: #1C1B1F;
+            --md-sys-color-on-surface-variant: #49454F;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-error: #B3261E;
+            --md-sys-color-on-error: #FFFFFF;
+            
+            /* MD3 Elevation */
+            --md-elevation-level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --md-elevation-level2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --md-elevation-level3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* MD3 Shape */
+            --md-radius-small: 8px;
+            --md-radius-medium: 12px;
+            --md-radius-large: 16px;
+            
+            /* MD3 Typography */
+            --md-font-family: 'Roboto', sans-serif;
         }
-
-        body, html {
+        
+        [data-theme="dark"] {
+            /* MD3 Dark Theme Colors */
+            --md-sys-color-primary: #D0BCFF;
+            --md-sys-color-primary-container: #4F378B;
+            --md-sys-color-on-primary: #371E73;
+            --md-sys-color-on-primary-container: #EADDFF;
+            --md-sys-color-secondary: #A8C7FA;
+            --md-sys-color-on-secondary: #002E6A;
+            --md-sys-color-secondary-container: #0B57D0;
+            --md-sys-color-on-secondary-container: #D3E3FD;
+            --md-sys-color-surface: #1C1B1F;
+            --md-sys-color-surface-variant: #49454F;
+            --md-sys-color-on-surface: #E6E1E5;
+            --md-sys-color-on-surface-variant: #CAC4D0;
+            --md-sys-color-outline: #938F99;
+            --md-sys-color-error: #F2B8B5;
+            --md-sys-color-on-error: #601410;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Funnel Display', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--md-font-family);
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+            padding: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
+        
         .container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            width: 90%;
-            max-width: 600px;
-            animation: fadeIn 1s ease-in-out;
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--md-sys-color-surface);
+            border-radius: var(--md-radius-large);
+            box-shadow: var(--md-elevation-level2);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+            animation: fade-in 0.5s ease-out;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            color: var(--primary-color);
+        
+        .card-header {
+            padding: 24px 24px 16px;
             text-align: center;
-            margin-bottom: 1.5rem;
-            animation: pop 0.8s ease-in-out;
         }
-
-        @keyframes pop {
-            0% {
-                transform: scale(0.9);
-                opacity: 0.7;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+        
+        .card-title {
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--md-sys-color-primary);
+            margin-bottom: 8px;
         }
-
-        .input-group {
-            display: flex;
-            margin-bottom: 1rem;
+        
+        .card-content {
+            padding: 0 24px 24px;
         }
-
-        #prompt-input {
-            flex-grow: 1;
-            padding: 0.5rem;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
-            font-family: 'Funnel Display', sans-serif;
+        
+        .input-container {
+            position: relative;
+            margin-bottom: 24px;
         }
-
-        #generate-btn {
-            background-color: var(--primary-color);
-            color: white;
+        
+        .input-field {
+            width: 100%;
+            height: 56px;
+            padding: 0 56px 0 16px;
+            font-size: 16px;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--md-radius-small);
+            background-color: transparent;
+            color: var(--md-sys-color-on-surface);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+        }
+        
+        .input-field::placeholder {
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        
+        .input-helper {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-top: 4px;
+            padding-left: 16px;
+        }
+        
+        .generate-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
             border: none;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-radius: 0 4px 4px 0;
-            font-family: 'Funnel Display', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
-        #generate-btn:hover {
-            background-color: #3a7bc8;
+        
+        .generate-btn:hover {
+            background-color: var(--md-sys-color-primary);
+            filter: brightness(1.1);
         }
-
-        #result {
-            text-align: center;
-            margin-top: 1rem;
+        
+        .generate-btn:active {
+            transform: scale(0.95);
         }
-
-        #generated-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
+        
+        .generate-btn:disabled {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            cursor: not-allowed;
         }
-
-        #download-btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            color: white;
-            background-color: var(--secondary-color);
-            text-decoration: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #download-btn:hover {
-            background-color: #e8951b;
-        }
-
-        .loading {
+        
+        .loading-container {
             display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 0;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--md-sys-color-surface-variant);
+            border-top: 3px solid var(--md-sys-color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        .loading-text {
+            font-size: 14px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 16px;
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .image-container {
+            width: 100%;
+            border-radius: var(--md-radius-medium);
+            overflow: hidden;
+            background-color: var(--md-sys-color-surface-variant);
+            margin-bottom: 16px;
+        }
+        
+        .generated-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            background-color: transparent;
+            color: var(--md-sys-color-primary);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--md-radius-small);
+            font-size: 14px;
+            font-weight: 500;
             text-align: center;
-            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-
-        .loading span {
-            display: inline-block;
-            margin-left: 4px;
+        
+        .download-btn:hover {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
         }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            padding: 12px 16px;
+            border-radius: var(--md-radius-small);
+            box-shadow: var(--md-elevation-level3);
+            font-size: 14px;
+            max-width: 80%;
+            z-index: 1000;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--md-sys-color-error);
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-message {
+            flex-grow: 1;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        
+        body {
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px;
+    color: #333;
+}
     </style>
 </head>
 <body>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12,22C17.5,22 22,17.5 22,12C22,6.5 17.5,2 12,2C6.5,2 2,6.5 2,12C2,17.5 6.5,22 12,22M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,7V17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7" id="moon-icon" style="display:none;"></path>
+            <path d="M12,7C9.24,7 7,9.24 7,12C7,14.76 9.24,17 12,17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7M12,15C10.34,15 9,13.66 9,12C9,10.34 10.34,9 12,9C13.66,9 15,10.34 15,12C15,13.66 13.66,15 12,15M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M3.34,17L5.11,13.21C5.25,14 5.5,14.76 5.94,15.5C6.36,16.22 6.9,16.84 7.5,17.35L3.34,17M20.65,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.48,14.77 18.73,14 18.87,13.21L20.65,17" id="sun-icon"></path>
+        </svg>
+    </button>
+    
     <div class="container">
-        <h1>StableGen</h1>
-        <div class="input-group">
-            <input type="text" id="prompt-input" placeholder="Enter your image prompt...">
-            <button id="generate-btn">Let the AI imagine!</button>
+        <div class="card-header">
+            <h1 class="card-title">StableGen</h1>
         </div>
-        <div id="result"></div>
-        <div class="loading">Generating image<span>.</span></div>
+        <div class="card-content">
+            <div class="input-container">
+                <input type="text" id="prompt-input" class="input-field" placeholder="Enter your image prompt..." autocomplete="off">
+                <button id="generate-btn" class="generate-btn" aria-label="Generate image">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M5,3L4.35,6.34H17.94L17.5,8.5H3.92L3.26,11.83H16.85L16.09,15.64L10.61,17.45L5.86,15.64L6.19,14H2.85L2.06,18L9.91,21L18.96,18L20.16,11.97L20.4,10.76L21.94,3H5Z"></path>
+                    </svg>
+                </button>
+                <p class="input-helper">Try "a serene lake at sunset with mountains in the background"</p>
+            </div>
+            
+            <div id="loading-container" class="loading-container">
+                <div class="spinner"></div>
+                <p class="loading-text">Creating your masterpiece...</p>
+            </div>
+            
+            <div id="result-container" class="result-container">
+                <div class="image-container">
+                    <img id="generated-image" class="generated-image" alt="Generated image">
+                </div>
+                <a id="download-btn" class="download-btn" download="generated-image.png">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"></path>
+                    </svg>
+                    Download Image
+                </a>
+            </div>
+        </div>
     </div>
-
+    
+    <div id="toast" class="toast">
+        <div class="toast-message" id="toast-message"></div>
+    </div>
+    
     <script>
-        const API_TOKEN = "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"; // Replace with your actual Hugging Face API token
-        const API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large"; // Replace with the actual model endpoint
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+        
+        // Check for saved theme preference or use device preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.setAttribute('data-theme', 'dark');
+            moonIcon.style.display = 'block';
+            sunIcon.style.display = 'none';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            }
+        });
+        
+        // Toast functionality
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type;
+            
+            // Add show class to make the toast visible
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Hide the toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Image generation functionality
+        const API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large";
         const promptInput = document.getElementById('prompt-input');
         const generateBtn = document.getElementById('generate-btn');
-        const result = document.getElementById('result');
-        const loading = document.querySelector('.loading');
-
+        const loadingContainer = document.getElementById('loading-container');
+        const resultContainer = document.getElementById('result-container');
+        const generatedImage = document.getElementById('generated-image');
+        const downloadBtn = document.getElementById('download-btn');
+        
+        // Get API token from user
+        let API_TOKEN = localStorage.getItem('huggingface_token');
+        if (!API_TOKEN) {
+            API_TOKEN = prompt("Please enter your Hugging Face API token (it will be saved in your browser):");
+            if (API_TOKEN) {
+                localStorage.setItem('huggingface_token', API_TOKEN);
+            } else {
+                showToast("API token is required to generate images", "error");
+            }
+        }
+        
         async function generateImage(prompt) {
             try {
                 const response = await fetch(API_URL, {
@@ -165,11 +445,15 @@
                     },
                     body: JSON.stringify({ inputs: prompt }),
                 });
-
+                
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('huggingface_token');
+                        throw new Error("Invalid API token. Please refresh and enter a valid token.");
+                    }
                     throw new Error(`API error: ${response.status}`);
                 }
-
+                
                 const blob = await response.blob();
                 return URL.createObjectURL(blob);
             } catch (error) {
@@ -177,45 +461,50 @@
                 throw error;
             }
         }
-
+        
         generateBtn.addEventListener('click', async () => {
             const prompt = promptInput.value.trim();
             if (!prompt) {
-                alert("Please enter a prompt.");
+                showToast("Please enter a prompt", "error");
                 return;
             }
-
-            result.innerHTML = "";
-            loading.style.display = "block";
+            
+            if (!API_TOKEN) {
+                API_TOKEN = prompt("Please enter your Hugging Face API token (it will be saved in your browser):");
+                if (API_TOKEN) {
+                    localStorage.setItem('huggingface_token', API_TOKEN);
+                } else {
+                    showToast("API token is required to generate images", "error");
+                    return;
+                }
+            }
+            
+            // Show loading state
+            loadingContainer.style.display = "flex";
+            resultContainer.style.display = "none";
             generateBtn.disabled = true;
-
+            
             try {
                 const imageUrl = await generateImage(prompt);
-
-                // Add the image to the result
-                const img = document.createElement("img");
-                img.src = imageUrl;
-                img.id = "generated-image";
-                img.alt = `Generated image for: ${prompt}`;
-                result.appendChild(img);
-
-                // Add a download button
-                const downloadBtn = document.createElement("a");
-                downloadBtn.id = "download-btn";
+                
+                // Display the generated image
+                generatedImage.src = imageUrl;
+                generatedImage.alt = `Generated image for: ${prompt}`;
                 downloadBtn.href = imageUrl;
-                downloadBtn.download = "generated-image.png";
-                downloadBtn.textContent = "Download Image";
-                result.appendChild(downloadBtn);
+                
+                // Show the result
+                resultContainer.style.display = "block";
             } catch (error) {
-                result.textContent = "Error generating image. Please try again.";
+                showToast(error.message || "Error generating image", "error");
             } finally {
-                loading.style.display = "none";
+                loadingContainer.style.display = "none";
                 generateBtn.disabled = false;
             }
         });
-
-        promptInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
+        
+        // Handle Enter key press
+        promptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
                 generateBtn.click();
             }
         });
